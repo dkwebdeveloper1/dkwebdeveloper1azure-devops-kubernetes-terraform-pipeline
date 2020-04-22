@@ -5,9 +5,6 @@ strategy:
   matrix:
     linux:
       operatingSystem: 'ubuntu-latest'
-    mac:
-      operatingSystem: 'nacos-latest'
-
 
 pool:
   vmImage: $(operatingSystem)
