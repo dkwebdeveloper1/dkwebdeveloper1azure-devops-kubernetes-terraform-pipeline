@@ -31,9 +31,12 @@ stages:
           **/*.tf
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
     - bash: ls -R $(Build.ArtifactStagingDirectory)
+
+
+
 #  - job: SecondJob
-    steps:
-    - bash: echo Build SecondJob  
+#   steps:
+#   - bash: echo Build SecondJob  
 # - stage: DevDeploy
 #   variables:
 #     environment: Dev
