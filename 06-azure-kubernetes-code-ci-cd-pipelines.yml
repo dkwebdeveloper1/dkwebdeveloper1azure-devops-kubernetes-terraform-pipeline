@@ -1,0 +1,65 @@
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  tag: '$(Build.BuildId)'
+stages:
+
+# stage 1
+# Build Docker Image
+# Publish the KBS file
+
+  - stage: Build
+    displayName: Build Image
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+
+# stage 1
+# Build Docker Image
+# Publish the KBS file
+
+  
+        - task: Docker@2
+          inputs:
+            containerRegistry: 'dkwebdeveloper-docker-hub'
+            repository: 'dkwebdeveloper/currency-exchange-devops'
+            command: buildAndPush
+            Dockerfile: '**/Dockerfile'
+            tags: '$(tag)'
+
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            ArtifactName: 'manifests'
+            publishLocation: 'Container'
+
+  - stage: Deploy
+    displayName: Deploy Image
+    jobs:
+      - job: Deploy
+        displayName: Deploy
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:       
+
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: 'current'
+            artifactName: 'manifests'
+            itemPattern: '**/*.yaml'
+            targetPath: '$(System.ArtifactsDirectory)'
+
+        - task: KubernetesManifest@0
+          inputs:
+            action: 'deploy'
+            kubernetesServiceConnection: 'azure-kubernetes-connection'
+            namespace: 'default'
+            manifests: '$(Build.ArtifactStagingDirectory)/deployment.yaml'
+            containers: 'dkwebdeveloper/currency-exchange-devops:${tag}'
