@@ -61,5 +61,5 @@ stages:
             action: 'deploy'
             kubernetesServiceConnection: 'azure-kubernetes-connection'
             namespace: 'default'
-            manifests: '$(Build.ArtifactStagingDirectory)/deployment.yaml'
+            manifests: '$(Build.ArtifactStagingDirectory)/configuration/kubernetes/deployment.yaml'
             containers: 'dkwebdeveloper/currency-exchange-devops:${tag}'
